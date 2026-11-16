@@ -21,3 +21,4 @@ venv/
 
 # Environment secrets
 .env
+saved_models/

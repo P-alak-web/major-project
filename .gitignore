@@ -1,0 +1,23 @@
+# Dataset and ground-truth files
+dataset/
+data/
+*.tar
+*.tar.bz2
+*.zip
+
+# Generated data
+processed/
+outputs/
+
+# Python temporary files
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Model files
+*.pkl
+*.joblib
+
+# Environment secrets
+.env

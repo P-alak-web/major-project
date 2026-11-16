@@ -58,3 +58,37 @@ print(summary.to_string())
 
 print("\nNOTE: Unlabeled user-days are not verified negatives.")
 print("Precision, F1 and accuracy are not calculated.")
+
+
+# User-level detection on confirmed positive days
+user_results = matched.groupby(
+    ["scenario", "user"]
+)["anomaly"].max().reset_index()
+
+user_summary = user_results.groupby("scenario").agg(
+    total_users=("user", "count"),
+    detected_users=("anomaly", "sum")
+)
+
+user_summary["missed_users"] = (
+    user_summary["total_users"] - user_summary["detected_users"]
+)
+
+user_summary["detection_pct"] = (
+    100 * user_summary["detected_users"]
+    / user_summary["total_users"]
+).round(2)
+
+print("\n=== SCENARIO-WISE USER DETECTION ===")
+print(user_summary.to_string())
+
+total_users = matched["user"].nunique()
+detected_users = matched.groupby("user")["anomaly"].max().sum()
+
+print("\n=== OVERALL USER DETECTION ===")
+print("Known insider users:", total_users)
+print("Detected users:", int(detected_users))
+print("Missed users:", int(total_users - detected_users))
+print("User detection rate: {:.2f}%".format(
+    100 * detected_users / total_users
+))

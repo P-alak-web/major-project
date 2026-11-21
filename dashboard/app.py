@@ -17,7 +17,8 @@ page = st.sidebar.radio(
         "User Behaviour Analytics",
         "Threat Detection",
         "Explainable AI",
-        "Ground Truth Validation"
+        "Ground Truth Validation",
+        "Global ML Evaluation"
     ]
 )
 
@@ -429,6 +430,79 @@ elif page == "Ground Truth Validation":
         "Actual CERT ground truth and model predictions "
         "will be connected during backend integration."
     )
+    
+elif page == "Global ML Evaluation":
+    from pathlib import Path
+
+    st.caption("CERT r4.2 | Actual saved predictions | Global split: 2010-11-01")
+    root = Path(__file__).resolve().parent.parent
+    prediction_file = root / "outputs" / "eval" / "predictions_pooled.csv"
+    metrics_file = root / "outputs" / "eval" / "metrics_summary.csv"
+    truth_file = root / "outputs" / "ground_truth" / "ground_truth_user_day.csv"
+
+    if not prediction_file.is_file():
+        st.error(f"Missing predictions file: {prediction_file}")
+        st.stop()
+
+    @st.cache_data
+    def read_predictions(file_path, modified_time):
+        result = pd.read_csv(file_path, parse_dates=["day"])
+        expected = {"user", "day", "score"}
+        if not expected.issubset(result.columns):
+            raise ValueError(f"Missing prediction columns: {expected - set(result.columns)}")
+        return result
+
+    predictions = read_predictions(str(prediction_file), prediction_file.stat().st_mtime)
+    st.subheader("Pooled Isolation Forest: Evaluation Results")
+    c1, c2, c3 = st.columns(3)
+    c1.metric("Employee-days scored", f"{len(predictions):,}")
+    c2.metric("Employees scored", f"{predictions['user'].nunique():,}")
+    c3.metric("Model", "Pooled Isolation Forest")
+    st.info("Higher scores mean more anomalous behavior. Scores are NOT attack probabilities. "
+            "The model ranks previously evaluated employee-days; it does not perform live inference.")
+
+    st.subheader("Daily Ranked Alerts")
+    dates = sorted(predictions["day"].dt.date.unique(), reverse=True)
+    selected_date = st.selectbox("Evaluation date", dates)
+    budget = st.selectbox("Maximum alerts per day", [10, 50, 100], index=0)
+    daily = predictions.loc[predictions["day"].dt.date == selected_date].copy()
+    daily = daily.sort_values("score", ascending=False).reset_index(drop=True)
+    daily.insert(0, "daily_rank", daily.index + 1)
+    alerts = daily.head(budget).copy()
+
+    if truth_file.is_file():
+        truth = pd.read_csv(truth_file)
+        required = {"user", "date"}
+        if required.issubset(truth.columns):
+            truth["day"] = pd.to_datetime(truth["date"])
+            truth["user"] = truth["user"].astype(str).str.strip()
+            truth_keys = truth[["user", "day"]].drop_duplicates()
+            alerts = alerts.merge(truth_keys.assign(known_positive=True),
+                                  on=["user", "day"], how="left")
+            alerts["known_positive"] = alerts["known_positive"].fillna(False).astype(bool)
+            st.caption("Known positive = matched CERT answer annotation. Unannotated days "
+                       "are assumed negative for benchmark metrics, not independently verified benign.")
+    st.dataframe(alerts, use_container_width=True, hide_index=True)
+    st.download_button("Download selected daily alerts (CSV)",
+                       alerts.to_csv(index=False).encode("utf-8"),
+                       file_name=f"pooled_alerts_{selected_date}.csv", mime="text/csv")
+
+    st.subheader("Employee Anomaly Score History")
+    selected_user = st.selectbox("Employee", sorted(predictions["user"].unique()))
+    history = predictions.loc[predictions["user"] == selected_user].sort_values("day")
+    fig = px.line(history, x="day", y="score", markers=True,
+                  title=f"Pooled model anomaly scores — {selected_user}")
+    st.plotly_chart(fig, use_container_width=True)
+
+    st.subheader("Global Model Comparison")
+    if metrics_file.is_file():
+        metrics = pd.read_csv(metrics_file, index_col=0)
+        st.dataframe(metrics, use_container_width=True)
+        st.caption("Metrics use a global time split. Known pre-split malicious days "
+                   "were not removed from training; results are preliminary. "
+                   "Both models use Isolation Forest, not different algorithms.")
+    else:
+        st.warning(f"Missing evaluation metrics: {metrics_file}")
 
 else:
     st.info("This page is under development.")

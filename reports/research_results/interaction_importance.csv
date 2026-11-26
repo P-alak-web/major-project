@@ -1,0 +1,11 @@
+term,term_type,mean_absolute_contribution,mean_signed_contribution
+usb_connect_count & file_operations,Interaction,0.5912392873635437,-0.009637429236159631
+http_requests & email_count,Interaction,0.47321988011723715,0.010151016601320851
+logon_count & email_count,Interaction,0.4582803365564916,0.007729390364892901
+total_logon_events & usb_connect_count,Interaction,0.3648731723416394,-0.011358104299048342
+total_logon_events & usb_events,Interaction,0.3550376035517445,-0.007187285807447708
+total_logon_events & usb_disconnect_count,Interaction,0.3515623726393432,-0.004091002203457385
+total_logon_events & http_requests,Interaction,0.35096050779282895,-0.0068394066106263925
+logoff_count & http_requests,Interaction,0.22741494709269056,-0.004078181469912348
+total_logon_events & email_count,Interaction,0.11401330692082663,0.009321543033424279
+after_hours_logons & new_pc_count,Interaction,0.06209749403800728,0.026653824016472136

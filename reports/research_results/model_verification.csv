@@ -1,0 +1,6 @@
+model,samples_verified,max_score_difference,status
+EBM,1000,1.1102230246251565e-16,PASS
+XGBoost,1000,2.8045654243413765e-08,PASS
+Random Forest,1000,7.979727989493313e-17,PASS
+Pooled Isolation Forest,1000,9.71445146547012e-17,PASS
+Per-user Isolation Forest,1000,9.8879238130678e-17,PASS

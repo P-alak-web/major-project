@@ -1,0 +1,37 @@
+{
+    "XGBoost": {
+        "parameters": {
+            "n_estimators": 400,
+            "max_depth": 6
+        },
+        "validation_pr_auc": 0.7711966236094377
+    },
+    "Random Forest": {
+        "parameters": {
+            "n_estimators": 300,
+            "max_depth": null
+        },
+        "validation_pr_auc": 0.5842807174013098
+    },
+    "EBM": {
+        "parameters": {
+            "interactions": 10,
+            "max_rounds": 500
+        },
+        "validation_pr_auc": 0.8137909033835925
+    },
+    "Pooled Isolation Forest": {
+        "parameters": {
+            "n_estimators": 300,
+            "max_samples": 512
+        },
+        "validation_pr_auc": 0.02533035686347134
+    },
+    "Per-user Isolation Forest": {
+        "parameters": {
+            "n_estimators": 200,
+            "max_samples": "auto"
+        },
+        "validation_pr_auc": 0.018168503162411122
+    }
+}

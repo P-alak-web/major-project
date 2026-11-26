@@ -1,0 +1,15 @@
+model,parameters,validation_pr_auc
+XGBoost,"{""n_estimators"": 200, ""max_depth"": 3}",0.5377409410710446
+XGBoost,"{""n_estimators"": 300, ""max_depth"": 5}",0.7127497654132482
+XGBoost,"{""n_estimators"": 400, ""max_depth"": 6}",0.7711966236094377
+Random Forest,"{""n_estimators"": 200, ""max_depth"": 10}",0.26512314989246244
+Random Forest,"{""n_estimators"": 300, ""max_depth"": 20}",0.3936958259121316
+Random Forest,"{""n_estimators"": 300, ""max_depth"": null}",0.5842807174013098
+EBM,"{""interactions"": 0, ""max_rounds"": 300}",0.6965464210050589
+EBM,"{""interactions"": 5, ""max_rounds"": 300}",0.7813442854029077
+EBM,"{""interactions"": 10, ""max_rounds"": 500}",0.8137909033835925
+Pooled Isolation Forest,"{""n_estimators"": 200, ""max_samples"": 256}",0.02504280844303622
+Pooled Isolation Forest,"{""n_estimators"": 300, ""max_samples"": 512}",0.02533035686347134
+Pooled Isolation Forest,"{""n_estimators"": 300, ""max_samples"": 1024}",0.023024216671378946
+Per-user Isolation Forest,"{""n_estimators"": 100, ""max_samples"": ""auto""}",0.017355002073786294
+Per-user Isolation Forest,"{""n_estimators"": 200, ""max_samples"": ""auto""}",0.018168503162411122

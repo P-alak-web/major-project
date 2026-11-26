@@ -8,35 +8,14 @@ if str(ROOT) not in sys.path:
 
 import streamlit as st
 
+SHIELD = "\U0001F6E1\uFE0F"
+
 st.set_page_config(
     page_title="Insider Threat Detection",
-    page_icon="🛡️",
+    page_icon=SHIELD,
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
-st.sidebar.title("🛡️ Threat Detection")
-st.sidebar.markdown("---")
-
-page = st.sidebar.radio(
-    "Navigation",
-    [
-        "Overview",
-        "User Behaviour Analytics",
-        "Threat Detection",
-        "Explainable AI",
-        "Ground Truth Validation",
-        "Global ML Evaluation"
-    ]
-)
-
-st.sidebar.markdown("---")
-st.sidebar.caption("Explainable Insider Threat Detection System")
-
-st.title(f"🛡️ {page}")
-
-import pandas as pd
-import plotly.express as px
 
 from dashboard.real_ml_pages import (
     render_overview,
@@ -46,20 +25,80 @@ from dashboard.real_ml_pages import (
     render_global_evaluation,
 )
 
-if page == "Overview":
-    render_overview()
+from dashboard.evaluation_pages import (
+    render_ground_truth_validation,
+    render_attack_scenarios,
+    render_model_reliability,
+)
 
-elif page == "User Behaviour Analytics":
-    render_user_behaviour()
 
-elif page == "Threat Detection":
-    render_threat_detection()
+# ==========================================
+# SIDEBAR
+# ==========================================
 
-elif page == "Explainable AI":
-    render_explainable_ai()
+st.sidebar.title(
+    f"{SHIELD} Threat Detection"
+)
 
-elif page == "Ground Truth Validation":
-    st.info("Ground-truth validation is being integrated.")
+st.sidebar.caption(
+    "Explainable Insider Threat Detection "
+    "using User Behavior Analytics"
+)
 
-elif page == "Global ML Evaluation":
-    render_global_evaluation()
+st.sidebar.markdown("---")
+
+pages = {
+    "Overview":
+        render_overview,
+
+    "User Behaviour Analytics":
+        render_user_behaviour,
+
+    "Threat Detection":
+        render_threat_detection,
+
+    "Explainable AI":
+        render_explainable_ai,
+
+    "Ground Truth Validation":
+        render_ground_truth_validation,
+
+    "Global ML Evaluation":
+        render_global_evaluation,
+
+    "Attack Scenario Analysis":
+        render_attack_scenarios,
+
+    "Model Reliability & Explainability":
+        render_model_reliability
+}
+
+page = st.sidebar.radio(
+    "Navigation",
+    list(pages.keys())
+)
+
+st.sidebar.markdown("---")
+
+st.sidebar.caption("Dataset: CERT r4.2")
+
+st.sidebar.caption("Primary Model: EBM")
+
+st.sidebar.caption(
+    "Comparative Model: XGBoost"
+)
+
+st.sidebar.caption(
+    "Historical Research Prototype"
+)
+
+
+# ==========================================
+# PAGE ROUTING
+# ==========================================
+
+st.title(
+    f"{SHIELD} {page}"
+)
+
+pages[page]()

@@ -22,3 +22,16 @@ venv/
 # Environment secrets
 .env
 saved_models/
+
+# Local dashboard backups
+dashboard/*_backup.py
+dashboard/*_before_*.py
+dashboard/*_precontrolled.py
+
+# Editor and temporary files
+.vscode/
+*.tmp
+*.log
+
+# Employee-level prediction exports
+reports/r4_2_model_predictions.csv
